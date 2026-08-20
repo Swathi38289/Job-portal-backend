@@ -71,13 +71,67 @@ Scores are percentages from 0 to 100. Missing job descriptions or resumes return
 
 ## Testing
 
-Run the full test suite with:
+The project uses Django's built-in `unittest` test runner. Tests are stored in `jobs/tests.py` and `screening/tests.py`.
+
+### Run all tests
 
 ```bash
 python manage.py test
 ```
 
-The tests cover PDF and DOCX parsing, job-description parsing, skill extraction, similarity scoring, ranking, validation, and the screening API.
+Expected output:
+
+```text
+Ran 24 tests
+OK
+```
+
+### Run a specific test group
+
+```bash
+python manage.py test jobs
+python manage.py test screening
+python manage.py test screening.tests.ScreeningAPITests
+```
+
+The tests cover:
+
+- Candidate creation, validation, and resume file restrictions.
+- PDF and DOCX resume parsing.
+- Plain-text, PDF, DOCX, and TXT job-description parsing.
+- Known-skill and custom-keyword extraction.
+- TF-IDF similarity, semantic similarity, and score validation.
+- Candidate ranking and tie handling.
+- Screening API success and validation responses.
+- Forwarding of the `use_semantic=true` option.
+
+### Live API smoke test
+
+Start the server first:
+
+```bash
+python manage.py runserver
+```
+
+Then upload a real resume from another terminal:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/screen/ \
+  -F "job_description=Python Django REST API developer" \
+  -F "resumes=@./samples/resume.pdf" \
+  -F "use_semantic=false"
+```
+
+The response should be HTTP 200 with a `results` array containing `rank`, `filename`, and `score` fields.
+
+On Windows systems where numerical libraries report an OpenBLAS memory allocation error, limit their thread count before starting Django:
+
+```powershell
+$env:OPENBLAS_NUM_THREADS="1"
+$env:OMP_NUM_THREADS="1"
+$env:MKL_NUM_THREADS="1"
+python manage.py runserver 127.0.0.1:8000
+```
 
 ---
 
