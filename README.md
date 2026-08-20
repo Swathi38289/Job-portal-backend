@@ -1,6 +1,6 @@
-# Django Jobs Backend
+# AI Resume Screening Agent
 
-This is the backend for the Jobs application. Built with **Django** and **Django REST Framework**, it supports candidate data submission and resume uploads.
+An executable Django REST API that extracts text from resumes, identifies relevant skills, scores candidates against a job description, and returns a ranked shortlist. The repository also retains the original candidate-submission API.
 
 ## Submission overview
 
@@ -47,7 +47,9 @@ Use multipart form data with these fields:
 | `resumes`              | Yes                            | One or more PDF or DOCX files                        |
 | `use_semantic`         | No                             | Set to `true` to use sentence-transformer embeddings |
 
-### Sample request
+### Sample request with real files
+
+The following request assumes you provide your own files at the shown paths. For a guaranteed no-file demo, use `python demo_agent.py` below.
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/screen/ \
@@ -72,7 +74,7 @@ Scores are percentages from 0 to 100. Missing job descriptions or resumes return
 
 ### One-command demo
 
-After installing dependencies, run this from the repository root:
+After installing dependencies, run this from the repository root. No server, API key, or sample file is required:
 
 ```bash
 python demo_agent.py
@@ -95,12 +97,31 @@ HTTP 200
 
 To run the semantic model path instead, use `python demo_agent.py --semantic`. The first semantic run downloads `all-MiniLM-L6-v2` and caches it locally.
 
+### Processing flow
+
+```text
+Upload job description and resumes
+  -> parse PDF/DOCX/TXT content
+  -> extract known skills
+  -> calculate text and skill scores
+  -> rank candidates
+  -> return JSON results
+```
+
 ## Design tradeoffs
 
 - **TF-IDF is the default:** It is fast, deterministic, and works offline after installation. It is less effective when a resume and job description use different wording for the same idea.
 - **Semantic matching is opt-in:** `use_semantic=true` enables `all-MiniLM-L6-v2`. The model is loaded lazily and cached, but the first request downloads model files and uses more memory.
 - **Known-skill extraction is deliberately bounded:** The extractor uses a maintainable alias dictionary rather than an opaque model, which makes scoring explainable but means uncommon skills must be added to the dictionary.
 - **No database model for screening results yet:** Results are returned immediately and are not persisted, keeping the first API version simple while sacrificing history and auditability.
+- **Synchronous processing:** The first version processes uploads in the request, which keeps the demo easy to run but is not ideal for large batches or production-scale workloads.
+
+## Limitations and next steps
+
+- Scanned/image-only PDFs need OCR, which is not included yet.
+- The known-skill dictionary should be expanded or made configurable for new domains.
+- Screening results could be persisted with timestamps and reviewer feedback.
+- Large uploads should move to a background task queue with file-size and timeout controls.
 
 ## Testing
 
@@ -197,9 +218,10 @@ pip install -r requirements.txt
 ```
 
 ```bash
-python manage.py makemigrations
 python manage.py migrate
 ```
+
+The admin account is optional. Create one only if you need the admin panel:
 
 ```bash
 python manage.py createsuperuser
