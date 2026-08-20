@@ -1,0 +1,526 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Match | AI Screening Agent</title>
+    <style>
+      :root {
+        --ink: #18232d;
+        --muted: #687782;
+        --paper: #f5f7f3;
+        --panel: #ffffff;
+        --line: #dce5df;
+        --teal: #087f73;
+        --teal-dark: #07574f;
+        --lime: #d8ed8b;
+        --coral: #f4775d;
+        --shadow: 0 24px 60px rgba(28, 54, 53, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 10% 0%, #e6f3e5 0, transparent 34%),
+          var(--paper);
+        font-family: Georgia, "Times New Roman", serif;
+      }
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+      .shell {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+      header {
+        padding: 30px 0 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+      .mark {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--teal);
+        color: white;
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+      }
+      .status {
+        color: var(--teal-dark);
+        font:
+          700 12px Arial,
+          sans-serif;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      main {
+        padding: 54px 0 80px;
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 62px;
+        align-items: start;
+      }
+      .eyebrow {
+        color: var(--coral);
+        font:
+          700 12px Arial,
+          sans-serif;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      h1 {
+        max-width: 500px;
+        margin: 14px 0 20px;
+        font-size: clamp(42px, 6vw, 76px);
+        line-height: 0.94;
+        letter-spacing: -0.045em;
+        font-weight: 500;
+      }
+      .intro {
+        max-width: 430px;
+        color: var(--muted);
+        font:
+          17px/1.6 Arial,
+          sans-serif;
+      }
+      .note {
+        margin-top: 44px;
+        padding-left: 18px;
+        border-left: 3px solid var(--lime);
+        color: var(--muted);
+        font:
+          13px/1.5 Arial,
+          sans-serif;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid rgba(220, 229, 223, 0.9);
+        border-radius: 10px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+      }
+      label,
+      .label {
+        display: block;
+        margin-bottom: 9px;
+        color: var(--ink);
+        font:
+          700 12px Arial,
+          sans-serif;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      textarea {
+        width: 100%;
+        min-height: 142px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 14px;
+        color: var(--ink);
+        background: #fbfcfa;
+        outline: none;
+        font:
+          16px/1.45 Arial,
+          sans-serif;
+      }
+      textarea:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(8, 127, 115, 0.12);
+      }
+      .upload {
+        margin-top: 24px;
+        border: 1px dashed #98b7ae;
+        border-radius: 8px;
+        padding: 22px;
+        background: #f4faf5;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .upload:hover,
+      .upload.dragging {
+        border-color: var(--teal);
+        background: #ebf7ef;
+      }
+      .upload strong {
+        display: block;
+        margin-bottom: 5px;
+        font:
+          700 16px Arial,
+          sans-serif;
+      }
+      .upload span {
+        color: var(--muted);
+        font:
+          13px Arial,
+          sans-serif;
+      }
+      input[type="file"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+      }
+      .files {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+        font:
+          13px Arial,
+          sans-serif;
+      }
+      .file {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 11px;
+        border-radius: 5px;
+        background: #f1f4f0;
+      }
+      .file small {
+        color: var(--muted);
+      }
+      .options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .toggle {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--muted);
+        font:
+          13px Arial,
+          sans-serif;
+        cursor: pointer;
+      }
+      .toggle input {
+        width: 17px;
+        height: 17px;
+        accent-color: var(--teal);
+      }
+      button {
+        border: 0;
+        border-radius: 5px;
+        padding: 13px 20px;
+        color: white;
+        background: var(--teal);
+        cursor: pointer;
+        font:
+          700 13px Arial,
+          sans-serif;
+        letter-spacing: 0.04em;
+      }
+      button:hover {
+        background: var(--teal-dark);
+      }
+      button:disabled {
+        opacity: 0.55;
+        cursor: wait;
+      }
+      .message {
+        min-height: 20px;
+        margin-top: 15px;
+        color: var(--coral);
+        font:
+          13px/1.4 Arial,
+          sans-serif;
+      }
+      .results {
+        margin-top: 25px;
+      }
+      .results-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 10px;
+      }
+      .results-head h2 {
+        margin: 0;
+        font-size: 23px;
+        font-weight: 500;
+      }
+      .results-head span {
+        color: var(--muted);
+        font:
+          12px Arial,
+          sans-serif;
+      }
+      .result {
+        display: grid;
+        grid-template-columns: 42px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .rank {
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--teal-dark);
+        background: var(--lime);
+        font:
+          700 13px Arial,
+          sans-serif;
+      }
+      .filename {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font:
+          700 15px Arial,
+          sans-serif;
+      }
+      .bar {
+        height: 5px;
+        margin-top: 8px;
+        border-radius: 9px;
+        overflow: hidden;
+        background: #e8eeea;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--teal);
+      }
+      .score {
+        color: var(--teal-dark);
+        font:
+          700 20px Arial,
+          sans-serif;
+      }
+      .empty {
+        padding: 28px 0 4px;
+        color: var(--muted);
+        font:
+          14px Arial,
+          sans-serif;
+      }
+      @media (max-width: 800px) {
+        main {
+          grid-template-columns: 1fr;
+          gap: 34px;
+          padding-top: 30px;
+        }
+        h1 {
+          font-size: 54px;
+        }
+        .note {
+          margin-top: 28px;
+        }
+      }
+      @media (max-width: 480px) {
+        .shell {
+          width: min(100% - 26px, 1120px);
+        }
+        header {
+          padding-top: 20px;
+        }
+        .status {
+          display: none;
+        }
+        .panel {
+          padding: 20px;
+        }
+        .options {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div class="brand"><span class="mark">RM</span> Resume Match</div>
+        <div class="status">AI screening agent / ready</div>
+      </header>
+
+      <main>
+        <section>
+          <div class="eyebrow">Shortlist with signal</div>
+          <h1>Find the resume that fits.</h1>
+          <p class="intro">
+            Add a role and your candidate resumes. The screening agent reads
+            each document, compares skills and language, and returns a ranked
+            shortlist.
+          </p>
+          <div class="note">
+            PDF and DOCX resumes are supported. Semantic matching is optional
+            and downloads its model the first time it is used.
+          </div>
+        </section>
+
+        <section class="panel">
+          <form id="screen-form">
+            <label for="job-description">Job description</label>
+            <textarea
+              id="job-description"
+              name="job_description"
+              placeholder="Example: Python Django engineer with REST API and PostgreSQL experience..."
+              required
+            ></textarea>
+
+            <label class="upload" id="drop-zone" for="resume-files">
+              <strong>Choose resumes</strong>
+              <span>Drop PDF or DOCX files here, or click to browse</span>
+              <input
+                id="resume-files"
+                name="resumes"
+                type="file"
+                accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                multiple
+                required
+              />
+              <div class="files" id="file-list"></div>
+            </label>
+
+            <div class="options">
+              <label class="toggle" for="semantic"
+                ><input id="semantic" name="use_semantic" type="checkbox" /> Use
+                semantic matching</label
+              >
+              <button id="submit-button" type="submit">Screen resumes</button>
+            </div>
+            <div
+              class="message"
+              id="message"
+              role="status"
+              aria-live="polite"
+            ></div>
+          </form>
+
+          <div class="results" id="results" hidden>
+            <div class="results-head">
+              <h2>Ranked candidates</h2>
+              <span id="result-count"></span>
+            </div>
+            <div id="result-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const form = document.querySelector("#screen-form");
+      const filesInput = document.querySelector("#resume-files");
+      const dropZone = document.querySelector("#drop-zone");
+      const fileList = document.querySelector("#file-list");
+      const message = document.querySelector("#message");
+      const results = document.querySelector("#results");
+      const resultList = document.querySelector("#result-list");
+      const resultCount = document.querySelector("#result-count");
+      const submitButton = document.querySelector("#submit-button");
+
+      function renderFiles(files) {
+        fileList.innerHTML = Array.from(files)
+          .map(
+            (file) => `
+        <div class="file"><span>${file.name}</span><small>${(file.size / 1024).toFixed(0)} KB</small></div>
+      `,
+          )
+          .join("");
+      }
+
+      filesInput.addEventListener("change", () =>
+        renderFiles(filesInput.files),
+      );
+      ["dragenter", "dragover"].forEach((eventName) =>
+        dropZone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          dropZone.classList.add("dragging");
+        }),
+      );
+      ["dragleave", "drop"].forEach((eventName) =>
+        dropZone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          dropZone.classList.remove("dragging");
+        }),
+      );
+      dropZone.addEventListener("drop", (event) => {
+        filesInput.files = event.dataTransfer.files;
+        renderFiles(filesInput.files);
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        message.textContent = "";
+        results.hidden = true;
+        submitButton.disabled = true;
+        submitButton.textContent = "Screening...";
+
+        const formData = new FormData();
+        formData.append(
+          "job_description",
+          document.querySelector("#job-description").value,
+        );
+        formData.append(
+          "use_semantic",
+          document.querySelector("#semantic").checked ? "true" : "false",
+        );
+        Array.from(filesInput.files).forEach((file) =>
+          formData.append("resumes", file),
+        );
+
+        try {
+          const response = await fetch("/api/screen/", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          if (!response.ok)
+            throw new Error(data.detail || "The screening request failed.");
+          resultList.innerHTML = data.results
+            .map(
+              (result) => `
+          <div class="result">
+            <div class="rank">${result.rank}</div>
+            <div><div class="filename" title="${result.filename}">${result.filename}</div><div class="bar"><i style="width: ${result.score}%"></i></div></div>
+            <div class="score">${result.score}%</div>
+          </div>
+        `,
+            )
+            .join("");
+          resultCount.textContent = `${data.results.length} resume${data.results.length === 1 ? "" : "s"} screened`;
+          results.hidden = false;
+        } catch (error) {
+          message.textContent = error.message;
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "Screen resumes";
+        }
+      });
+    </script>
+  </body>
+</html>

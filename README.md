@@ -32,6 +32,23 @@ An executable Django REST API that extracts text from resumes, identifies releva
 
 The screening endpoint accepts one job description and one or more PDF or DOCX resumes. It extracts text, identifies known skills, calculates a match score, and returns candidates ordered from highest to lowest score.
 
+## Browser interface
+
+The project includes a simple browser interface for the screening agent. Start Django and open:
+
+```text
+http://127.0.0.1:8000/
+```
+
+In the interface:
+
+1. Paste the job description.
+2. Choose one or more PDF or DOCX resumes.
+3. Optionally enable semantic matching.
+4. Select **Screen resumes**.
+
+The page sends the files to the screening API and displays each candidate's rank, filename, score, and match bar. No frontend build step is required.
+
 ### Endpoint
 
 ```text
