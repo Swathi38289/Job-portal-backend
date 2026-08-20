@@ -2,6 +2,14 @@
 
 This is the backend for the Jobs application. Built with **Django** and **Django REST Framework**, it supports candidate data submission and resume uploads.
 
+## Submission overview
+
+- **Selected agent:** AI Resume Screening Agent.
+- **Public repository:** https://github.com/Swathi38289/Job-portal-backend
+- **Credentials:** No API keys or external service credentials are required.
+- **Scope:** Upload resumes and a job description, extract text and skills, score matches, and return a ranked result in one API response.
+- **Agent-specific deliverables:** PDF/DOCX parsing, job-description parsing, skill extraction, TF-IDF scoring, optional semantic scoring, candidate ranking, REST API, automated tests, and a reproducible demo script.
+
 ---
 
 ## Features
@@ -61,6 +69,31 @@ curl -X POST http://127.0.0.1:8000/api/screen/ \
 ```
 
 Scores are percentages from 0 to 100. Missing job descriptions or resumes return HTTP 400 with a `detail` message. Unsupported file formats also return HTTP 400.
+
+### One-command demo
+
+After installing dependencies, run this from the repository root:
+
+```bash
+python demo_agent.py
+```
+
+The script creates a sample PDF resume in memory, sends it through the same screening API view, and prints output similar to:
+
+```text
+HTTP 200
+{
+  "results": [
+    {
+      "rank": 1,
+      "filename": "sample-jane-doe.pdf",
+      "score": 90.8
+    }
+  ]
+}
+```
+
+To run the semantic model path instead, use `python demo_agent.py --semantic`. The first semantic run downloads `all-MiniLM-L6-v2` and caches it locally.
 
 ## Design tradeoffs
 
