@@ -94,8 +94,8 @@ The tests cover PDF and DOCX parsing, job-description parsing, skill extraction,
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/yourrepo.git
-cd yourrepo
+git clone https://github.com/Swathi38289/Job-portal-backend.git
+cd Job-portal-backend
 ```
 
 ```bash
