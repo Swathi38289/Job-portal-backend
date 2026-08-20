@@ -182,6 +182,41 @@ class ScreeningAPITests(SimpleTestCase):
 	def setUp(self):
 		self.client = APIClient()
 
+	@patch("screening.views.rank_candidates")
+	def test_forwards_semantic_option(self, rank_candidates):
+		pdf = fitz.open()
+		pdf.new_page().insert_text((72, 72), "Python Django developer")
+		resume = SimpleUploadedFile(
+			"jane.pdf", pdf.tobytes(), content_type="application/pdf"
+		)
+		rank_candidates.return_value = [
+			{
+				"rank": 1,
+				"score": 84.38,
+				"candidate": {"filename": "jane.pdf"},
+			}
+		]
+
+		response = self.client.post(
+			"/api/screen/",
+			{
+				"job_description": "Python Django developer",
+				"resumes": [resume],
+				"use_semantic": "true",
+			},
+			format="multipart",
+		)
+
+		self.assertEqual(response.status_code, 200)
+		rank_candidates.assert_called_once_with(
+			[{
+				"filename": "jane.pdf",
+				"resume_text": "Python Django developer",
+			}],
+			"Python Django developer",
+			use_semantic=True,
+		)
+
 	def test_screens_uploaded_resumes(self):
 		pdf = fitz.open()
 		pdf.new_page().insert_text((72, 72), "Python Django developer")
