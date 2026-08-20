@@ -1,4 +1,5 @@
 from rest_framework import status
+from django.shortcuts import redirect, render
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +11,9 @@ from .resume_parser import parse_resume
 
 class ScreenResumesAPIView(APIView):
 	parser_classes = (MultiPartParser, FormParser, JSONParser)
+
+	def get(self, request, format=None):
+		return redirect("screening-home")
 
 	def post(self, request, format=None):
 		job_description = request.data.get("job_description")
@@ -62,10 +66,5 @@ class ScreenResumesAPIView(APIView):
 			},
 			status=status.HTTP_200_OK,
 		)
-from django.shortcuts import render
-
-# Create your views here.
-
-
 def screening_home(request):
 	return render(request, "screening/index.html")
