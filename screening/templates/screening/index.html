@@ -270,6 +270,35 @@
           12px Arial,
           sans-serif;
       }
+      .summary {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 14px;
+        align-items: center;
+        margin: 18px 0 8px;
+        padding: 15px 16px;
+        border-left: 4px solid var(--teal);
+        background: #f2f8f3;
+      }
+      .summary strong {
+        display: block;
+        margin-bottom: 4px;
+        font:
+          700 14px Arial,
+          sans-serif;
+      }
+      .summary span {
+        color: var(--muted);
+        font:
+          13px/1.4 Arial,
+          sans-serif;
+      }
+      .summary-score {
+        color: var(--teal-dark);
+        font:
+          700 24px Arial,
+          sans-serif;
+      }
       .result {
         display: grid;
         grid-template-columns: 42px 1fr auto;
@@ -426,6 +455,13 @@
               <h2>Ranked candidates</h2>
               <span id="result-count"></span>
             </div>
+            <div class="summary" id="summary" hidden>
+              <div>
+                <strong id="summary-title"></strong>
+                <span id="summary-detail"></span>
+              </div>
+              <div class="summary-score" id="summary-score"></div>
+            </div>
             <div id="result-list"></div>
           </div>
         </section>
@@ -442,6 +478,17 @@
       const resultList = document.querySelector("#result-list");
       const resultCount = document.querySelector("#result-count");
       const submitButton = document.querySelector("#submit-button");
+      const summary = document.querySelector("#summary");
+      const summaryTitle = document.querySelector("#summary-title");
+      const summaryDetail = document.querySelector("#summary-detail");
+      const summaryScore = document.querySelector("#summary-score");
+
+      function matchLabel(score) {
+        if (score >= 80) return "Strong match";
+        if (score >= 60) return "Promising match";
+        if (score >= 40) return "Partial match";
+        return "Low match";
+      }
 
       function renderFiles(files) {
         fileList.innerHTML = Array.from(files)
@@ -477,6 +524,7 @@
         event.preventDefault();
         message.textContent = "";
         results.hidden = true;
+        summary.hidden = true;
         submitButton.disabled = true;
         submitButton.textContent = "Screening...";
 
@@ -501,6 +549,16 @@
           const data = await response.json();
           if (!response.ok)
             throw new Error(data.detail || "The screening request failed.");
+          if (!data.results.length)
+            throw new Error(
+              "No readable resumes were returned by the screening agent.",
+            );
+          const topMatch = data.results[0];
+          summaryTitle.textContent = `${matchLabel(topMatch.score)}: ${topMatch.filename}`;
+          summaryDetail.textContent =
+            "The highest-ranked resume based on job-description similarity and detected skills.";
+          summaryScore.textContent = `${topMatch.score}%`;
+          summary.hidden = false;
           resultList.innerHTML = data.results
             .map(
               (result) => `
