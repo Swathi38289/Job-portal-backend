@@ -142,7 +142,8 @@ Upload job description and resumes
 
 ## Testing
 
-The project uses Django's built-in `unittest` test runner. Tests are stored in `jobs/tests.py` and `screening/tests.py`.
+The project uses Django's built-in `unittest` test runner. Tests are stored in
+`jobs/test_jobs.py` and `screening/test_screening.py`.
 
 Always run the tests with the same Python environment where `requirements.txt`
 was installed. Running `python manage.py test` with a different system Python
