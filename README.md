@@ -106,7 +106,7 @@ HTTP 200
     {
       "rank": 1,
       "filename": "sample-jane-doe.pdf",
-      "score": 90.8
+      "score": 74.78
     }
   ]
 }
@@ -144,6 +144,24 @@ Upload job description and resumes
 
 The project uses Django's built-in `unittest` test runner. Tests are stored in `jobs/tests.py` and `screening/tests.py`.
 
+Always run the tests with the same Python environment where `requirements.txt`
+was installed. Running `python manage.py test` with a different system Python
+can fail during test discovery with `ModuleNotFoundError: No module named
+'fitz'`, before any test case runs.
+
+From the repository root on Windows, use the workspace environment shown below
+if it exists:
+
+```powershell
+..\venv\Scripts\python.exe manage.py test
+```
+
+For a fresh clone using a local virtual environment, use:
+
+```powershell
+venv\Scripts\python.exe manage.py test
+```
+
 ### Run all tests
 
 ```bash
@@ -164,6 +182,9 @@ python manage.py test jobs
 python manage.py test screening
 python manage.py test screening.tests.ScreeningAPITests
 ```
+
+The focused screening command should report `Ran 21 tests` and finish with
+`OK` when the dependencies are installed in the selected environment.
 
 The tests cover:
 
