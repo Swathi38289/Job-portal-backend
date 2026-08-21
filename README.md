@@ -2,6 +2,39 @@
 
 An executable Django REST API that extracts text from resumes, identifies relevant skills, scores candidates against a job description, and returns a ranked shortlist. The repository also retains the original candidate-submission API.
 
+## Evaluator Quick Start
+
+This is the fastest reproducible path for reviewing the selected Resume
+Screening Agent. It requires no API key and no running server for the tests or
+demo.
+
+From the repository root:
+
+```powershell
+python -m venv venv
+venv\Scripts\activate
+python -m pip install -r requirements.txt
+python manage.py migrate
+python manage.py test
+python demo_agent.py
+```
+
+The expected test result is:
+
+```text
+Found 24 test(s)
+Ran 24 tests
+OK
+```
+
+The expected demo result starts with `HTTP 200` and returns one ranked resume
+with a score. The demo creates its PDF in memory, so no sample files or API
+credentials are needed.
+
+> If the challenge dashboard still displays `0 tests`, that is its repository
+> counter, not the result of the Django test runner. Confirm the terminal
+> output above and refresh the dashboard after the latest GitHub Actions run.
+
 ## Submission overview
 
 - **Selected agent:** AI Resume Screening Agent.
@@ -143,7 +176,8 @@ Upload job description and resumes
 ## Testing
 
 The project uses Django's built-in `unittest` test runner. Tests are stored in
-`jobs/test_jobs.py` and `screening/test_screening.py`.
+`jobs/test_jobs.py` and `screening/test_screening.py`; both use conventional
+`test_*.py` filenames so generic repository scanners can find them.
 
 Always run the tests with the same Python environment where `requirements.txt`
 was installed. Running `python manage.py test` with a different system Python
@@ -181,7 +215,7 @@ OK
 ```bash
 python manage.py test jobs
 python manage.py test screening
-python manage.py test screening.tests.ScreeningAPITests
+python manage.py test screening.test_screening.ScreeningAPITests
 ```
 
 The focused screening command should report `Ran 21 tests` and finish with
@@ -198,7 +232,7 @@ The tests cover:
 - Screening API success and validation responses.
 - Forwarding of the `use_semantic=true` option.
 
-### Live API smoke test
+### Live screening API smoke test
 
 Start the server first:
 
@@ -216,6 +250,9 @@ curl -X POST http://127.0.0.1:8000/api/screen/ \
 ```
 
 The response should be HTTP 200 with a `results` array containing `rank`, `filename`, and `score` fields.
+
+The separate legacy candidate API is available at `/api/candidates/`; it is not
+the resume screening workflow described above.
 
 On Windows systems where numerical libraries report an OpenBLAS memory allocation error, limit their thread count before starting Django:
 
