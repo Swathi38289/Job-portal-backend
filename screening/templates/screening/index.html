@@ -546,7 +546,18 @@
             method: "POST",
             body: formData,
           });
-          const data = await response.json();
+          const contentType = response.headers.get("content-type") || "";
+          const responseText = await response.text();
+          let data;
+
+          if (contentType.includes("application/json")) {
+            data = JSON.parse(responseText);
+          } else {
+            throw new Error(
+              "The screening server returned a web page instead of JSON. Start Django with `python manage.py runserver` and try again.",
+            );
+          }
+
           if (!response.ok)
             throw new Error(data.detail || "The screening request failed.");
           if (!data.results.length)
